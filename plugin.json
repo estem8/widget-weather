@@ -8,9 +8,8 @@
   "styles": ["dist/index.css"],
   "widget": {
     "name": "Weather",
-    "defaultLayout": { "width": 240, "height": 356 },
+    "defaultLayout": { "width": 280, "height": 132 },
     "defaultConfig": {
-      "layout": "vertical",
       "units": "auto",
       "opacity": 80,
       "showTrackTemp": true,
@@ -22,12 +21,6 @@
       "showOnlyWhenOnTrack": false
     },
     "settings": [
-      {
-        "key": "layout",
-        "type": "select",
-        "label": "Layout",
-        "options": ["vertical", "horizontal"]
-      },
       {
         "key": "units",
         "type": "select",

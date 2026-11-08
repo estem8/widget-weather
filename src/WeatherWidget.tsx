@@ -7,7 +7,6 @@ import type { ReactNode } from 'react';
 import './weather.css';
 
 type WeatherConfig = {
-  layout: 'vertical' | 'horizontal';
   units: 'auto' | 'Metric' | 'Imperial';
   opacity: number;
   showTrackTemp: boolean;
@@ -165,47 +164,48 @@ const WeatherWidget = ({
     });
   }
 
+  const trackTemp = columns.find((column) => column.key === 'track-temp')?.value;
+  const airTemp = columns.find((column) => column.key === 'air-temp')?.value;
+  const wind = columns.find((column) => column.key === 'wind');
+  const surface = wetnessLevel === undefined ? '—' : wetnessLevel <= 2 ? 'DRY' : wetnessLevel <= 4 ? 'DAMP' : 'WET';
+  const secondary = columns.filter((column) =>
+    ['humidity', 'precipitation', 'wetness'].includes(column.key)
+  );
+
   return (
     <section
-      className={`weather-plugin ${config.layout === 'horizontal' ? 'weather-plugin--horizontal' : ''}`}
+      className="weather-plugin"
       style={{ '--weather-opacity': `${config.opacity}%` } as React.CSSProperties}
       aria-label="Weather"
     >
-      <div className="weather-plugin__grid">
-        {columns.map((column) => (
-          <div className="weather-plugin__cell" key={column.key}>
-            <div className="weather-plugin__cell-heading">
-              <span className="weather-plugin__icon">{column.icon}</span>
-              <span className="weather-plugin__label">{column.label}</span>
-              <span className="weather-plugin__value">{column.value}</span>
-              {column.key === 'wind' &&
-                column.direction !== undefined &&
-                column.yaw !== undefined && (
-                  <span
-                    className="weather-plugin__wind-direction"
-                    style={{
-                      transform: `rotate(${column.direction - column.yaw}rad)`,
-                    }}
-                    aria-label="Wind direction"
-                  >
-                    ↑
-                  </span>
-                )}
-            </div>
-            {column.key === 'wetness' && (
-              <div
-                className="weather-plugin__wetness-track"
-                role="progressbar"
-                aria-label="Track wetness"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={wetnessPercent}
-              >
-                <span style={{ width: `${wetnessPercent}%` }} />
-              </div>
-            )}
+      <div className="weather-plugin__card">
+        <div className="weather-plugin__hero">
+          <div className={`weather-plugin__surface weather-plugin__surface--${surface.toLowerCase()}`}>
+            <strong>{surface}</strong>
+            <span>{wetnessLevel === undefined ? 'Track surface' : WETNESS[wetnessLevel]}</span>
           </div>
-        ))}
+          <div className="weather-plugin__temperatures">
+            <div className="weather-plugin__air-temp">{airTemp ?? '—'}<span className="weather-plugin__trend">↗</span></div>
+            {trackTemp && <div className="weather-plugin__track-temp">track {trackTemp}</div>}
+          </div>
+          {wind && (
+            <div className="weather-plugin__wind">
+              <span className="weather-plugin__wind-arrow" style={{ transform: `rotate(${(wind.direction ?? 0) - (wind.yaw ?? 0)}rad)` }}>↑</span>
+              <strong>{wind.value.split(' ')[0]}</strong>
+              <span>{wind.value.split(' ').slice(1).join(' ')}</span>
+            </div>
+          )}
+        </div>
+        {secondary.length > 0 && (
+          <div className="weather-plugin__stats">
+            {secondary.map((column) => (
+              <div className="weather-plugin__stat" key={column.key}>
+                <span>{column.label}</span><strong>{column.value}</strong>
+                {column.key === 'wetness' && <span className="weather-plugin__wetness-track"><i style={{ width: `${wetnessPercent}%` }} /></span>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
