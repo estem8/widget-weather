@@ -1,0 +1,54 @@
+name: Build weather plugin
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply release version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: python3 scripts/set_plugin_version.py "${GITHUB_REF_NAME#v}"
+
+      - name: Type-check plugin
+        run: npm run typecheck
+
+      - name: Build distributable ZIP
+        run: npm run build
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iracing-weather-widget
+          path: release/*.zip
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          release/*.zip
+          --repo "$GITHUB_REPOSITORY"
+          --verify-tag
+          --generate-notes

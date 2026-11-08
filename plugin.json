@@ -1,0 +1,57 @@
+{
+  "manifestVersion": 1,
+  "id": "estem8.weather",
+  "name": "iracing_plugin Weather",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "entry": "dist/index.js",
+  "styles": ["dist/index.css"],
+  "widget": {
+    "name": "Weather",
+    "defaultLayout": { "width": 240, "height": 356 },
+    "defaultConfig": {
+      "layout": "vertical",
+      "units": "auto",
+      "opacity": 80,
+      "showTrackTemp": true,
+      "showAirTemp": true,
+      "showWind": true,
+      "showHumidity": true,
+      "showPrecipitation": false,
+      "showWetness": true,
+      "showOnlyWhenOnTrack": false
+    },
+    "settings": [
+      {
+        "key": "layout",
+        "type": "select",
+        "label": "Layout",
+        "options": ["vertical", "horizontal"]
+      },
+      {
+        "key": "units",
+        "type": "select",
+        "label": "Temperature units",
+        "options": ["auto", "Metric", "Imperial"]
+      },
+      {
+        "key": "opacity",
+        "type": "number",
+        "label": "Background opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      { "key": "showTrackTemp", "type": "boolean", "label": "Track temperature" },
+      { "key": "showAirTemp", "type": "boolean", "label": "Air temperature" },
+      { "key": "showWind", "type": "boolean", "label": "Wind" },
+      { "key": "showHumidity", "type": "boolean", "label": "Humidity" },
+      { "key": "showPrecipitation", "type": "boolean", "label": "Precipitation" },
+      { "key": "showWetness", "type": "boolean", "label": "Track wetness" },
+      { "key": "showOnlyWhenOnTrack", "type": "boolean", "label": "Show only when on track" }
+    ]
+  },
+  "requires": {
+    "channels": ["session-bar.snapshot", "track-state.snapshot"]
+  }
+}
