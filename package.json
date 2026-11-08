@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build && python3 scripts/package_zip.py",
+    "build": "vite build && node scripts/package-zip.mjs",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.0",
+    "fflate": "^0.8.3",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
   }
